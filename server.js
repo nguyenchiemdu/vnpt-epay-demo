@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
-
+const axios = require('axios');
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -22,8 +22,10 @@ app.post('/home/process', async (req, res) => {
         isEW = true;
         req.body.payType = 'NO';
     }
-    transactionData = await fetch("https://demo.megapay.vn/home/process", {
-        "headers": {
+    var config = {
+        method: 'post',
+        url: "https://demo.megapay.vn/home/process",
+        headers: {
             "accept": "application/json, text/javascript, */*; q=0.01",
             "accept-language": "vi,en-US;q=0.9,en;q=0.8,ru;q=0.7,zh-TW;q=0.6,zh;q=0.5",
             "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -38,14 +40,21 @@ app.post('/home/process', async (req, res) => {
             "Referer": "https://demo.megapay.vn/all-payment-methods/iphone-11-plus",
             "Referrer-Policy": "strict-origin-when-cross-origin",
         },
-        "body": convertJsonToString(req.body),
-        "method": "POST"
-    }).then(res => res.json()).then(res => { console.log(res); return res.data; });
+        data: convertJsonToString(req.body)
+    };
+    transactionData = await axios(config)
+        .then(function (response) {
+            data = response.data.data;
+            console.log(response)
+            return data;
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     if (isEW) {
         transactionData.payType = 'EW';
         transactionData.bankCode = bankCode;
     }
-    console.log(transactionData)
     res.json({
         "data": transactionData,
         "status": "success",
