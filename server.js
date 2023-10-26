@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/home/process", createTransaction);
-app.post("/callback/transactionHandle", transactionHandlerCallback);
+app.get("/callback/transactionHandle", transactionHandlerCallback);
 app.post("/transactionHandle", transactionHandler);
 
 app.listen(port, () => {

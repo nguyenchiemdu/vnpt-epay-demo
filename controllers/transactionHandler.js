@@ -15,6 +15,7 @@ async function transactionHandlerCallback(req, res, next) {
   res.json({
     status: "success",
     message: "Success",
+    data: req.query,
   });
 }
 async function transactionHandler(req, res, next) {
