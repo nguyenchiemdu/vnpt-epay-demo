@@ -33,7 +33,6 @@ async function createTransaction(req, res) {
   transactionData = await axios(config)
     .then(function (response) {
       data = response.data.data;
-      console.log(response);
       return data;
     })
     .catch(function (error) {
@@ -43,6 +42,8 @@ async function createTransaction(req, res) {
     transactionData.payType = "EW";
     transactionData.bankCode = bankCode;
   }
+  transactionData.payOption = req.body.payOption;
+  console.log(transactionData);
   res.json({
     data: transactionData,
     status: "success",
