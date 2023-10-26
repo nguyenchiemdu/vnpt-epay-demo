@@ -43,6 +43,7 @@ async function createTransaction(req, res) {
     transactionData.bankCode = bankCode;
   }
   transactionData.payOption = req.body.payOption;
+  transactionData.userId = "6539d6cf197f81e8317056f7";
   console.log(transactionData);
   res.json({
     data: transactionData,
