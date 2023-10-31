@@ -10,7 +10,10 @@ const {
   transactionHandler,
   transactionHandlerCallback,
 } = require("./controllers/transactionHandler");
-const { createTransaction } = require("./controllers/createTransaction");
+const {
+  createTransaction,
+  createTransactionForMobile,
+} = require("./controllers/createTransaction");
 database.connect();
 
 app.use(cors());
@@ -23,6 +26,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/home/process", createTransaction);
+app.post("/home/process/mobile", createTransactionForMobile);
 app.get("/callback/transactionHandle", transactionHandlerCallback);
 app.post("/transactionHandle", transactionHandler);
 
