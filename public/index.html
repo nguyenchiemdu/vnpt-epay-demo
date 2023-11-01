@@ -117,6 +117,9 @@
   <script>
     document.getElementById('submitBtn').onclick = async (e) => {
       e.preventDefault();
+      let form = document.getElementById('megapayForm');
+      // let jsonForm = formToJson(form)
+      // console.log(jsonForm);
       await createTransaction();
       openPayment(1, 'https://pg.megapay.vn',);
     }

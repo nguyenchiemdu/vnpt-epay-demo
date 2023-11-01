@@ -10,21 +10,31 @@ const {
   transactionHandler,
   transactionHandlerCallback,
 } = require("./controllers/transactionHandler");
-const { createTransaction } = require("./controllers/createTransaction");
+const {
+  createTransaction,
+  createTransactionForMobile,
+} = require("./controllers/createTransaction");
 database.connect();
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
 
+
+
+app.post("/home/process", createTransaction);
+app.post("/home/process/mobile", createTransactionForMobile);
+app.get("/callback/transactionHandle", transactionHandlerCallback);
+app.post("/transactionHandle", transactionHandler);
+app.post("/pg_was/order/Minit.do", (req, res) => {
+  console.log(req.headers);
+  console.log(req.body);
+  res.json({})  
+});
+app.use(express.static(path.join(__dirname, "public")));
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
-
-app.post("/home/process", createTransaction);
-app.get("/callback/transactionHandle", transactionHandlerCallback);
-app.post("/transactionHandle", transactionHandler);
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
