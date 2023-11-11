@@ -1,5 +1,6 @@
 const axios = require("axios");
 const { convertJsonToString } = require("../common");
+const Transaction = require("../models/transaction");
 
 const createTransactionConfig = {
   url: "https://demo.megapay.vn/home/process",
@@ -21,7 +22,7 @@ const createTransactionConfig = {
   },
 };
 
-async function createTransaction(req, res) {
+async function createDemoTransaction(req, res) {
   let isEW = false;
   let bankCode = req.body.bankCode;
   if (req.body.payType == "EW") {
@@ -55,69 +56,31 @@ async function createTransaction(req, res) {
     message: "Success",
   });
 }
-async function createTransactionForMobile(req, res) {
-  let isEW = false;
-  let bankCode = req.body.bankCode;
-  if (req.body.payType == "EW") {
-    isEW = true;
-    req.body.payType = "NO";
-  }
-  var config = {
-    method: "post",
-    url: createTransactionConfig.url,
-    headers: createTransactionConfig.headers,
-    data: convertJsonToString(req.body),
-  };
-  transactionData = await axios(config)
-    .then(function (response) {
-      data = response.data.data;
-      return data;
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-  if (isEW) {
-    transactionData.payType = "EW";
-    transactionData.bankCode = bankCode;
-  }
-  transactionData.payOption = req.body.payOption;
-  transactionData.userId = "6539d6cf197f81e8317056f7";
-
-  fullTransaction = {
-    currency: "VND",
-    fee: "",
-    buyerCity: "hanoi",
-    buyerState: "hanoi",
-    buyerPostCd: "12950",
-    buyerCountry: "",
-    receiverLastNm: "",
-    receiverPhone: "",
-    receiverState: "",
-    receiverPostCd: "12950",
-    receiverCountry: "",
-    callBackUrl:
-      "https://vnpt-epay-demo.onrender.com/callback/transactionHandle",
-    notiUrl: "https://vnpt-epay-demo.onrender.com/transactionHandle",
-    reqDomain: "http://localhost:5500",
-    userLanguage: "VN",
-    windowType: "1",
-    userFee: "",
-    vaCondition: "03",
-    vaStartDt: "20231024131752",
-    vaEndDt: "20240424235959",
-  };
-  // combine transaction data and full transaction
-  for (var key in transactionData) {
-    if (transactionData.hasOwnProperty(key)) {
-      fullTransaction[key] = transactionData[key];
+async function createTransaction(req, res) {
+  let transaction = req.body;
+  for (let key in transaction) {
+    if (transaction[key] == "") {
+     transaction[key] = null;
     }
   }
-  console.log(fullTransaction);
+  console.log(transaction);
+  const newTransaction = new Transaction({
+    userId: transaction["userId"],
+    amount: transaction.amount,
+    currency: transaction.currency,
+    payType: transaction.payType,
+    bankCode: transaction.bankCode,
+    payOption: transaction.payOption,
+  });
+
+  // Save the newCallback document to the CallbackUrl collection
+  await newTransaction.save();
   res.json({
-    data: fullTransaction,
+    data: newTransaction,
     status: "success",
     message: "Success",
   });
 }
 
-module.exports = { createTransaction, createTransactionForMobile };
+
+module.exports = { createDemoTransaction,createTransaction };

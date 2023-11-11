@@ -7,12 +7,11 @@ const path = require("path");
 const database = require("./db");
 const fs = require("fs");
 const {
-  transactionHandler,
-  transactionHandlerCallback,
+  transactionNotifyHandler,
+  transactionCallbackHandler,
 } = require("./controllers/transactionHandler");
 const {
-  createTransaction,
-  createTransactionForMobile,
+  createDemoTransaction, createTransaction,
 } = require("./controllers/createTransaction");
 database.connect();
 
@@ -22,10 +21,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
-app.post("/home/process", createTransaction);
-app.post("/home/process/mobile", createTransactionForMobile);
-app.get("/callback/transactionHandle", transactionHandlerCallback);
-app.post("/transactionHandle", transactionHandler);
+app.post("/home/process", createDemoTransaction);
+//TODO:
+app.post("/transaction/create", createTransaction);
+app.get("/callback/transactionHandle", transactionCallbackHandler);
+app.post("/transactionHandle", transactionNotifyHandler);
 app.post("/pg_was/order/Minit.do", (req, res) => {
   console.log(req.headers);
   console.log(req.body);

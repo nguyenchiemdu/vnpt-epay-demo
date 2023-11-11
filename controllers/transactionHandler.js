@@ -1,6 +1,7 @@
 const CallbackUrl = require("../models/callbackUrl");
 const NotifyUrl = require("../models/notifyUrl");
-async function transactionHandlerCallback(req, res, next) {
+const url = require('url');  
+async function transactionCallbackHandler(req, res, next) {
   body = req.body;
   console.log("callBackUrl");
   console.log(req.body);
@@ -11,14 +12,14 @@ async function transactionHandlerCallback(req, res, next) {
 
   // Save the newCallback document to the CallbackUrl collection
   await newCallback.save();
-
-  res.json({
-    status: "success",
-    message: "Success",
-    data: req.query,
-  });
+  res.redirect(
+    url.format({
+      pathname:`/callback.html`,
+      query:req.query,
+    })
+  )
 }
-async function transactionHandler(req, res, next) {
+async function transactionNotifyHandler(req, res, next) {
   body = req.body;
   console.log("notiUrl");
   console.log(req.body);
@@ -34,4 +35,4 @@ async function transactionHandler(req, res, next) {
     message: "Success",
   });
 }
-module.exports = { transactionHandlerCallback, transactionHandler };
+module.exports = { transactionNotifyHandler, transactionCallbackHandler };
